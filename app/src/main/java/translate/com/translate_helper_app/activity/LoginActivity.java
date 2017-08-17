@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,8 +18,9 @@ import java.util.concurrent.TimeoutException;
 
 import translate.com.translate_helper_app.R;
 import translate.com.translate_helper_app.task.LoginRestTask;
+import translate.com.translate_helper_app.utils.SharePreferenceUtil;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener
 {
     private TextView back;
     private TextView more;
@@ -42,7 +44,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //设置主题
         setTheme(R.style.AppTheme);
 
-        initView();
+        initViews();
     }
 
     /**
@@ -60,33 +62,59 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     /**
      * 初始化控件
      */
-    private void initView()
+    private void initViews()
     {
+        /**
+         * 获取组件
+         */
         back = (TextView) findViewById(R.id.back);
         more = (TextView) findViewById(R.id.more);
         title = (TextView) findViewById(R.id.title);
-
         savePassCheck = (CheckBox) findViewById(R.id.savePassCheck);
         savePassword = (TextView) findViewById(R.id.savePassword);
         forgetPassword = (TextView) findViewById(R.id.forgetPassword);
         loginLaw2 = (TextView) findViewById(R.id.loginLaw2);
-
         emailET = (EditText) findViewById(R.id.email);
         passwordET = (EditText) findViewById(R.id.password);
-
         loginBtn = (Button) findViewById(R.id.login);
 
-        //登录界面只需要显示"登录"
-        back.setText("退出");
-        title.setText("登录");
-        more.setText("注册");
+        //记住用户名和密码
+        initLoginInfo();
 
+        //登录界面只需要显示
+        back.setText(getString(R.string.leave));
+        title.setText(getString(R.string.login));
+        more.setText(getString(R.string.register));
+
+        /**
+         * 设置监听
+         */
         back.setOnClickListener(this);
         more.setOnClickListener(this);
         savePassword.setOnClickListener(this);
         forgetPassword.setOnClickListener(this);
         loginLaw2.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
+        savePassCheck.setOnCheckedChangeListener(this);
+    }
+
+    /**
+     * 如果之前有记住用户名和密码，那么此处直接获取用户名和密码信息
+     */
+    private void initLoginInfo()
+    {
+        String emailSaved = SharePreferenceUtil.getString(this, "email");
+        String passwordSaved = SharePreferenceUtil.getString(this, "password");
+        boolean isSavePassChecked = SharePreferenceUtil.getBoolean(this, "isChecked", false);
+        if (null != emailSaved && null != passwordSaved)
+        {
+            emailET.setText(emailSaved);
+            passwordET.setText(passwordSaved);
+        }
+        if (isSavePassChecked)
+        {
+            savePassCheck.setChecked(isSavePassChecked);
+        }
     }
 
     @Override
@@ -135,7 +163,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if (loginStatus)
             {
                 Toast.makeText(this, "登录成功！", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, SecondActivity.class);
+                Intent intent = new Intent(this, RegisterActivity.class);
                 startActivity(intent);
             } else
             {
@@ -145,6 +173,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         {
             Toast.makeText(this, "登录失败，网络不通！", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b)
+    {
+        if (b)
+        {
+            SharePreferenceUtil.putString(this, "email", emailET.getText().toString());
+            SharePreferenceUtil.putString(this, "password", passwordET.getText().toString());
+            SharePreferenceUtil.putBoolean(this, "isChecked", true);
+        } else
+        {
+            if (SharePreferenceUtil.haveKey(this, "email"))
+            {
+                SharePreferenceUtil.remove(this, "email");
+            }
+            if (SharePreferenceUtil.haveKey(this, "password"))
+            {
+                SharePreferenceUtil.remove(this, "password");
+            }
+            if (SharePreferenceUtil.haveKey(this, "isChecked"))
+            {
+                SharePreferenceUtil.remove(this, "isChecked");
+            }
         }
     }
 }

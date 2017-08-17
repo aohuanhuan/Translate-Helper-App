@@ -7,4 +7,7 @@
     <string name="login">登录</string>
     <string name="loginLaw1">登录即代表阅读并同意</string>
     <string name="loginLaw2">服务条款</string>
+    <string name="leave">退出</string>
+    <string name="register">注册</string>
+    <string name="back">返回</string>
 </resources>
