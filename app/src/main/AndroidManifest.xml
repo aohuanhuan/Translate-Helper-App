@@ -17,7 +17,11 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.RegisterActivity">
+        <activity android:name=".activity.FetchVerificationActivity">
+        </activity>
+        <activity android:name=".activity.CheckVerificationActivity">
+        </activity>
+        <activity android:name=".activity.MainActivity">
         </activity>
     </application>
 

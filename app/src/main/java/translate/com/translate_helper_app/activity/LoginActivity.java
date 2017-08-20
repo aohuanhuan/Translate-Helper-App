@@ -3,7 +3,6 @@ package translate.com.translate_helper_app.activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -12,15 +11,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import translate.com.translate_helper_app.R;
+import translate.com.translate_helper_app.common.RegexConst;
+import translate.com.translate_helper_app.exception.ExceptionCode;
+import translate.com.translate_helper_app.exception.TranslateException;
 import translate.com.translate_helper_app.task.LoginRestTask;
 import translate.com.translate_helper_app.utils.SharePreferenceUtil;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener
+public class LoginActivity extends BaseActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener
 {
     private TextView back;
     private TextView more;
@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 moveTaskToBack(true);
                 break;
             case R.id.more:
-                Toast.makeText(this, "跳转注册页面", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, FetchVerificationActivity.class));
                 break;
             case R.id.savePassword:
                 boolean checked = savePassCheck.isChecked();
@@ -154,25 +154,38 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //获取用户输入的email和password
         String email = emailET.getText().toString();
         String password = passwordET.getText().toString();
+        if (!email.matches(RegexConst.emailRegex))
+        {
+            Toast.makeText(this, "请输入正确的邮箱账号！", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if ("".equals(password))
+        {
+            Toast.makeText(this, "请输入密码！", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         LoginRestTask loginRestTask = new LoginRestTask();
         AsyncTask<String, Integer, Boolean> loginTask = loginRestTask.execute(email, password);
         try
         {
-            boolean loginStatus = loginTask.get(5, TimeUnit.SECONDS);
+            boolean loginStatus = loginTask.get(10, TimeUnit.SECONDS);
             if (loginStatus)
             {
                 Toast.makeText(this, "登录成功！", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, RegisterActivity.class);
-                startActivity(intent);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("email", email);
+
+                openActivity(MainActivity.class, bundle);
             } else
             {
                 Toast.makeText(this, "登录失败，用户名或者密码错误！", Toast.LENGTH_SHORT).show();
             }
-        } catch (InterruptedException | ExecutionException | TimeoutException e)
+        } catch (Exception e)
         {
             Toast.makeText(this, "登录失败，网络不通！", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+            throw new TranslateException(ExceptionCode.TIMEOUT);
         }
     }
 

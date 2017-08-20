@@ -22,7 +22,7 @@ import translate.com.translate_helper_app.utils.HttpUtils;
 public class LoginRestTask extends AsyncTask<String, Integer, Boolean>
 {
     //登录请求异步任务
-    private static final String URL = "http://119.29.22.107:8080//register/login";
+    private String URL = "http://119.29.22.107:8080/register/login";
 
     @Override
     protected Boolean doInBackground(String... strings)
@@ -34,8 +34,8 @@ public class LoginRestTask extends AsyncTask<String, Integer, Boolean>
         loginRequest.setEmail(email);
         loginRequest.setPassword(password);
 
-        String result = HttpUtils.doPost(URL, loginRequest);
-        if (null != result && "true".equals(result))
+        String response = HttpUtils.doPost(URL, loginRequest);
+        if (null != response && "true".equals(response))
         {
             return true;
         }
