@@ -94,6 +94,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         basicUserInfo.setEmail(regEmail.getText().toString());
         basicUserInfo.setUsername(regUsername.getText().toString());
         basicUserInfo.setPassword(regPass.getText().toString());
+        basicUserInfo.setMobile(regMobile.getText().toString());
         basicUserInfo.setProvince("320100");
         basicUserInfo.setCity("320111");
         basicUserInfo.setWorkPlace("江苏省南京市雨花台华为南京研究所");

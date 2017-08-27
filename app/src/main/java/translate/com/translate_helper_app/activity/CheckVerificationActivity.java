@@ -119,13 +119,14 @@ public class CheckVerificationActivity extends BaseActivity implements View.OnCl
                 AsyncTask<String, Void, BasicUserInfo> userInfoExecute = userInfoTask.execute(email);
 
                 BasicUserInfo basicUserInfo = userInfoExecute.get(10, TimeUnit.SECONDS);
+
                 Bundle userInfo = new Bundle();
-                userInfo.putString("userName", basicUserInfo.getUsername());
                 userInfo.putString("email", email);
                 userInfo.putString("tokenId", tokenId);
                 //邮箱已经被使用
                 if (null != basicUserInfo)
                 {
+                    userInfo.putString("userName", basicUserInfo.getUsername());
                     openActivity(EmailUsedActivity.class, userInfo);
                 }
                 //跳转到注册页面
