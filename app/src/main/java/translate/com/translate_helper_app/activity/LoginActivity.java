@@ -79,7 +79,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         loginBtn = (Button) findViewById(R.id.login);
 
         //记住用户名和密码
-        initLoginInfo();
+        Bundle bundle = getIntent().getExtras();
+
+        if (null != bundle)
+        {
+            String email = bundle.getString("email");
+            emailET.setText(email);
+        } else
+        {
+            initLoginInfo();
+        }
 
         //登录界面只需要显示
         back.setText(getString(R.string.leave));

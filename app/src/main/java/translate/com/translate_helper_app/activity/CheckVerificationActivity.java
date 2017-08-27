@@ -17,7 +17,9 @@ import translate.com.translate_helper_app.R;
 import translate.com.translate_helper_app.common.RegexConst;
 import translate.com.translate_helper_app.exception.ExceptionCode;
 import translate.com.translate_helper_app.exception.TranslateException;
+import translate.com.translate_helper_app.model.BasicUserInfo;
 import translate.com.translate_helper_app.task.CheckVerificationCodeTask;
+import translate.com.translate_helper_app.task.UserInfoTask;
 
 /**
  * Created by Administrator on 2017/8/18.
@@ -111,6 +113,26 @@ public class CheckVerificationActivity extends BaseActivity implements View.OnCl
             {
                 Toast.makeText(this, "验证码校验成功，返回当前的tokenId为 " + tokenId, Toast.LENGTH_SHORT).show();
 
+                //验证码校验成功之后，查询绑定的邮箱有没有注册过账号
+                UserInfoTask userInfoTask = new UserInfoTask();
+
+                AsyncTask<String, Void, BasicUserInfo> userInfoExecute = userInfoTask.execute(email);
+
+                BasicUserInfo basicUserInfo = userInfoExecute.get(10, TimeUnit.SECONDS);
+                Bundle userInfo = new Bundle();
+                userInfo.putString("userName", basicUserInfo.getUsername());
+                userInfo.putString("email", email);
+                userInfo.putString("tokenId", tokenId);
+                //邮箱已经被使用
+                if (null != basicUserInfo)
+                {
+                    openActivity(EmailUsedActivity.class, userInfo);
+                }
+                //跳转到注册页面
+                else
+                {
+                    openActivity(RegisterActivity.class, userInfo);
+                }
             }
 
         } catch (Exception e)

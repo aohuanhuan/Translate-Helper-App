@@ -19,11 +19,11 @@ public class GsonUtils
 
     public static <T> T fromJson(String json, Class<T> clazz)
     {
-        return "".equals(json) ? null : gson.fromJson(json, clazz);
+        return ("".equals(json) || null == json) ? null : gson.fromJson(json, clazz);
     }
 
     public static <T> T fromJson(String json, TypeToken<T> token)
     {
-        return "".equals(json) ? null : (T) gson.fromJson(json, token.getType());
+        return ("".equals(json) || null == json) ? null : (T) gson.fromJson(json, token.getType());
     }
 }
