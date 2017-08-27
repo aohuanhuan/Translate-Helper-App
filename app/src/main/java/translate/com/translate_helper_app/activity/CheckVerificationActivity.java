@@ -91,7 +91,7 @@ public class CheckVerificationActivity extends BaseActivity implements View.OnCl
      */
     private void checkCode()
     {
-        CheckVerificationCodeTask task = new CheckVerificationCodeTask();
+        CheckVerificationCodeTask task = new CheckVerificationCodeTask(this);
 
         Bundle bundle = getIntent().getExtras();
         String email = bundle.getString("email");
@@ -103,42 +103,6 @@ public class CheckVerificationActivity extends BaseActivity implements View.OnCl
             return;
         }
 
-        AsyncTask<String, Integer, String> execute = task.execute(email, registerCode);
-
-        try
-        {
-            String tokenId = execute.get(10, TimeUnit.SECONDS);
-            //服务器验证码校验成功
-            if (!"".equals(tokenId))
-            {
-                Toast.makeText(this, "验证码校验成功，返回当前的tokenId为 " + tokenId, Toast.LENGTH_SHORT).show();
-
-                //验证码校验成功之后，查询绑定的邮箱有没有注册过账号
-                UserInfoTask userInfoTask = new UserInfoTask();
-
-                AsyncTask<String, Void, BasicUserInfo> userInfoExecute = userInfoTask.execute(email);
-
-                BasicUserInfo basicUserInfo = userInfoExecute.get(10, TimeUnit.SECONDS);
-
-                Bundle userInfo = new Bundle();
-                userInfo.putString("email", email);
-                userInfo.putString("tokenId", tokenId);
-                //邮箱已经被使用
-                if (null != basicUserInfo)
-                {
-                    userInfo.putString("userName", basicUserInfo.getUsername());
-                    openActivity(EmailUsedActivity.class, userInfo);
-                }
-                //跳转到注册页面
-                else
-                {
-                    openActivity(RegisterActivity.class, userInfo);
-                }
-            }
-
-        } catch (Exception e)
-        {
-            new TranslateException(ExceptionCode.TIMEOUT);
-        }
+        task.execute(email, registerCode);
     }
 }

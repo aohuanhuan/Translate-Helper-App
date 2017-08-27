@@ -50,13 +50,13 @@ public class BaseActivity extends AppCompatActivity
         return super.dispatchTouchEvent(ev);
     }
 
-    protected void openActivity(Class<?> mClass)
+    public void openActivity(Class<?> mClass)
     {
         Log.d(TAG, "openActivity: open " + mClass.getSimpleName());
         openActivity(mClass, null);
     }
 
-    protected void openActivity(Class<?> mClass, Bundle bundle)
+    public void openActivity(Class<?> mClass, Bundle bundle)
     {
         Intent intent = new Intent(this, mClass);
         if (null != bundle)
@@ -68,13 +68,13 @@ public class BaseActivity extends AppCompatActivity
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
-    protected void openActivityWithoutAnim(Class<?> mClass)
+    public void openActivityWithoutAnim(Class<?> mClass)
     {
         Log.d(TAG, "openActivityWithoutAnim: " + mClass.getSimpleName());
         openActivityWithoutAnim(mClass, null);
     }
 
-    protected void openActivityWithoutAnim(Class<?> mClass, Bundle bundle)
+    public void openActivityWithoutAnim(Class<?> mClass, Bundle bundle)
     {
         Intent intent = new Intent(this, mClass);
         if (null != bundle)
@@ -85,12 +85,12 @@ public class BaseActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    protected void openActivity(String action)
+    public void openActivity(String action)
     {
         openActivity(action, null);
     }
 
-    protected void openActivity(String action, Bundle bundle)
+    public void openActivity(String action, Bundle bundle)
     {
         Intent intent = new Intent(action);
         if (null != bundle)

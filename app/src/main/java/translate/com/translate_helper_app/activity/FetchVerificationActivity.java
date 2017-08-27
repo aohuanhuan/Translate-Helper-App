@@ -92,7 +92,7 @@ public class FetchVerificationActivity extends BaseActivity implements View.OnCl
      */
     private void fetchVerificationCode()
     {
-        FetchVerificationCodeTask task = new FetchVerificationCodeTask();
+        FetchVerificationCodeTask task = new FetchVerificationCodeTask(this);
 
         String email = registerEmail.getText().toString();
         if (!email.matches(RegexConst.emailRegex))
@@ -101,24 +101,6 @@ public class FetchVerificationActivity extends BaseActivity implements View.OnCl
             return;
         }
 
-        AsyncTask<String, Integer, Boolean> execute = task.execute(email);
-        try
-        {
-            boolean response = execute.get(10, TimeUnit.SECONDS);
-            if (response)
-            {
-                Toast.makeText(this, "已成功向您的邮箱 " + email + " 发送验证码！", Toast.LENGTH_SHORT).show();
-
-                Bundle bundle = new Bundle();
-                bundle.putString("email", email);
-                openActivity(CheckVerificationActivity.class, bundle);
-            } else
-            {
-                Toast.makeText(this, "向您的邮箱 " + email + " 发送验证码失败！", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e)
-        {
-            throw new TranslateException(ExceptionCode.TIMEOUT);
-        }
+        task.execute(email);
     }
 }

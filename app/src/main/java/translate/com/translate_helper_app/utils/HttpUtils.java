@@ -28,18 +28,12 @@ public class HttpUtils
      * @param url 请求的链接
      * @return rest请求结果
      */
-    public static String doGet(String url)
+    public static String doGet(String url) throws Exception
     {
-        try
-        {
-            HttpURLConnection urlConnection = getHttpURLConnection(url);
-            urlConnection.setRequestMethod(HttpMethod.GET.name());
+        HttpURLConnection urlConnection = getHttpURLConnection(url);
+        urlConnection.setRequestMethod(HttpMethod.GET.name());
 
-            return getResponse(urlConnection);
-        } catch (IOException e)
-        {
-            throw new TranslateException(ExceptionCode.NETWORK_ERROR);
-        }
+        return getResponse(urlConnection);
     }
 
     /**
@@ -49,33 +43,26 @@ public class HttpUtils
      * @param postData 请求数据
      * @return rest请求结果
      */
-    public static String doPost(String url, Object postData)
+    public static String doPost(String url, Object postData) throws Exception
     {
-        try
-        {
-            HttpURLConnection urlConnection = getHttpURLConnection(url);
+        HttpURLConnection urlConnection = getHttpURLConnection(url);
 
-            urlConnection.setRequestMethod(HttpMethod.POST.name());
-            // 发送POST请求必须设置允许输出
-            urlConnection.setDoOutput(true);
-            // 发送POST请求必须设置允许输入setDoInput的默认值就是true
-            urlConnection.setDoInput(true);
+        urlConnection.setRequestMethod(HttpMethod.POST.name());
+        // 发送POST请求必须设置允许输出
+        urlConnection.setDoOutput(true);
+        // 发送POST请求必须设置允许输入setDoInput的默认值就是true
+        urlConnection.setDoInput(true);
 
-            //获取输出流
-            OutputStream os = urlConnection.getOutputStream();
-            //传递的数据
-            String data = GsonUtils.toJson(postData);
-            os.write(data.getBytes());
-            os.flush();
+        //获取输出流
+        OutputStream os = urlConnection.getOutputStream();
+        //传递的数据
+        String data = GsonUtils.toJson(postData);
+        os.write(data.getBytes());
+        os.flush();
 
-            return getResponse(urlConnection);
-        } catch (IOException e)
-        {
-            throw new TranslateException(ExceptionCode.NETWORK_ERROR);
-        }
+        return getResponse(urlConnection);
     }
 
-    @NonNull
     private static String getResponse(HttpURLConnection urlConnection) throws IOException
     {
         if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK)

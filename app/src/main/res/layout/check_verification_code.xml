@@ -55,7 +55,7 @@
         android:layout_marginStart="20sp"
         android:layout_marginTop="30sp"
         android:hint="请输入6位数邮箱验证码"
-        android:inputType="textEmailAddress"
+        android:inputType="number"
         android:textSize="20sp"/>
 
     <Button

@@ -7,4 +7,6 @@ public interface AppConstant
      */
     String SHARE_PATH = "Translate-Helper";
 
+    String BASE_URL = "http://119.29.22.107:8080";
+
 }

@@ -1,6 +1,5 @@
 package translate.com.translate_helper_app.activity;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -17,7 +16,7 @@ import translate.com.translate_helper_app.R;
 import translate.com.translate_helper_app.common.RegexConst;
 import translate.com.translate_helper_app.exception.ExceptionCode;
 import translate.com.translate_helper_app.exception.TranslateException;
-import translate.com.translate_helper_app.task.LoginRestTask;
+import translate.com.translate_helper_app.task.LoginTask;
 import translate.com.translate_helper_app.utils.SharePreferenceUtil;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener
@@ -31,8 +30,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private TextView forgetPassword;
     private TextView loginLaw2;
 
-    private EditText emailET = null;
-    private EditText passwordET = null;
+    private EditText emailET;
+    private EditText passwordET;
 
     private Button loginBtn;
 
@@ -135,7 +134,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 moveTaskToBack(true);
                 break;
             case R.id.more:
-                startActivity(new Intent(this, FetchVerificationActivity.class));
+                openActivity(FetchVerificationActivity.class);
                 break;
             case R.id.savePassword:
                 boolean checked = savePassCheck.isChecked();
@@ -151,6 +150,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 login();
                 break;
             default:
+                break;
         }
     }
 
@@ -174,28 +174,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             return;
         }
 
-        LoginRestTask loginRestTask = new LoginRestTask();
-        AsyncTask<String, Integer, Boolean> loginTask = loginRestTask.execute(email, password);
-        try
-        {
-            boolean loginStatus = loginTask.get(10, TimeUnit.SECONDS);
-            if (loginStatus)
-            {
-                Toast.makeText(this, "登录成功！", Toast.LENGTH_SHORT).show();
-
-                Bundle bundle = new Bundle();
-                bundle.putString("email", email);
-
-                openActivity(MainActivity.class, bundle);
-            } else
-            {
-                Toast.makeText(this, "登录失败，用户名或者密码错误！", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e)
-        {
-            Toast.makeText(this, "登录失败，网络不通！", Toast.LENGTH_SHORT).show();
-            throw new TranslateException(ExceptionCode.TIMEOUT);
-        }
+        LoginTask loginTask = new LoginTask(this);
+        loginTask.execute(email, password);
     }
 
     @Override

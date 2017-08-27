@@ -2,8 +2,8 @@ package translate.com.translate_helper_app.task;
 
 import android.os.AsyncTask;
 
+import translate.com.translate_helper_app.common.AppConstant;
 import translate.com.translate_helper_app.model.BasicUserInfo;
-import translate.com.translate_helper_app.model.LoginRequest;
 import translate.com.translate_helper_app.utils.HttpUtils;
 
 /**
@@ -12,16 +12,24 @@ import translate.com.translate_helper_app.utils.HttpUtils;
 public class RegisterTask extends AsyncTask<Object, Void, Boolean>
 {
     //注册请求异步任务
-    private String URL = "http://119.29.22.107:8080/register/registerUser?emailToken=";
+    private String restUrl = AppConstant.BASE_URL.concat("/register/registerUser?emailToken=");
 
     @Override
-    protected Boolean doInBackground(Object... obj)
+    protected Boolean doInBackground(Object... params)
     {
-        BasicUserInfo basicUserInfo = (BasicUserInfo) obj[0];
-        String tokenId = (String) obj[1];
+        BasicUserInfo basicUserInfo = (BasicUserInfo) params[0];
+        String tokenId = (String) params[1];
 
-        URL += tokenId;
-        String response = HttpUtils.doPost(URL, basicUserInfo);
+        restUrl = restUrl.concat(tokenId);
+
+        String response = null;
+        try
+        {
+            response = HttpUtils.doPost(restUrl, basicUserInfo);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         if (null != response && "true".equals(response))
         {
             return true;
